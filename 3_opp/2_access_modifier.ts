@@ -16,7 +16,7 @@ erişime kapatışması gerekir.
 - protected: Sadece classın kendisi ve onu extend eden classlar tarafından 
              erişilmesi için kullanılır.
 
-- privae: Sadece tanımlandığı class tarafından erişilebilir, extend eden classlar
+- private: Sadece tanımlandığı class tarafından erişilebilir, extend eden classlar
           ve dışarıdan erişilmez.
 */
 
