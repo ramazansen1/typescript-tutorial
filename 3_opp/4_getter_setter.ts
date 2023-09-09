@@ -94,9 +94,10 @@ console.log("----------------------------");
     - Gizli olan property'ler alt tire ile başlamalı. Örn: private _creditCardNumber
 
     - Methodların erişim belirtecinden sonra `get` ve `set` isimli erişim belirletçlerini
-      yazarak methodu tanımlamaya başlanır.
+      yazarak methodu tanımlamaya başlarız.
 
-    -
+    - Normal fonksiyonlarda aynı isimde iki fonksiyon bulunmamalıdır. Fakat `get` ve `set`
+      olarak tanımlanan aynı isme sahip iki fonksiyon tanımlamak mümkündür.
 
 */
 class UserPaymentInfo_2 {
@@ -106,11 +107,108 @@ class UserPaymentInfo_2 {
 
   public set creditCardNumber(creditCardNumber: string) {
     // .. burada kontroller yapışır.
+    console.log(
+      "set creditCardNumber(creditCardNumber:string) fonksiyonu çağrıldı, creditCardNumber:",
+      creditCardNumber
+    );
 
     this._creditCardNumber = creditCardNumber;
   }
 
   public get creditCardNumber() {
+    console.log("get creditCardNumber() fonksiyonu çağrıldı.");
     return this._creditCardNumber;
   }
 }
+
+const ramazanin_kredi_karti = new UserPaymentInfo_2();
+
+// Yukarıda "set" olarak tanımlanmış olan fonksiyonu sanki bir propery'miş
+// gibi kullanıyoruz. Eşittir ifadesini kullanarak değer ataması yaptığımda
+// aslında bu property'yi set etmiş olurum. Set ettiğimimde de yukarıda
+// "set creditCardNumber(...)" şeklinde tanımlanmış olan fonksiyon invoke
+// edilir. Bu invoke etme olayını typescript yapar. Yani biz aslında eşittir
+// ile atama yapıyoruz ama arka planda fonksiyon çalışıyor.
+// Böylece birinci yöntemde yapılan tüm kontrolleri bu atama işlemi için de
+// yapmak mümkün hala geliyor.
+// set fonksiyonun fonksiyon gibi çağırmayız property ekleyerek yaparz.
+ramazanin_kredi_karti.creditCardNumber = "test";
+
+// "get" fonkisdyonu çalışır. geriye değer dönderir.
+console.log("Okunan bilgi: ", ramazanin_kredi_karti.creditCardNumber);
+console.log("------------------------------------");
+
+class AgeCalculator {
+  private _year: number = 2023;
+
+  public set calculate(birthYear: number) {
+    console.log(
+      "set calculate(birthYear:number) fonkisiyonu çağrıldı, birthYear: ",
+      birthYear
+    );
+    const age = this._year - birthYear;
+    this._year = age;
+  }
+  public get calculate() {
+    console.log("get calculate() fonksiyonu çağrıldı.");
+    return this._year;
+  }
+}
+
+const ramazanin_yasi = new AgeCalculator();
+
+ramazanin_yasi.calculate = 1996;
+
+console.log("ramazanın yaşı: ", ramazanin_yasi.calculate);
+
+console.log("------------------------------------");
+
+class ExchangeMoney {
+  private _country: string;
+  private _money: number;
+  private _currentDolar: number;
+  private _currentTl: number;
+
+  public constructor(country: string) {
+    this._country = country;
+    this._money = 0;
+    this._currentDolar = 20;
+    this._currentTl = 0.038;
+  }
+
+  private exchangeToTurkish(excMoney: number): number {
+    return excMoney * this._currentDolar;
+  }
+
+  private exchangetoDolar(excMoney: number): number {
+    return excMoney * this._currentTl;
+  }
+
+  public set exchangeMoney(excMoney: number) {
+    console.log("set fonksiyon çalıştı, excMoney: ", excMoney);
+    if (this._country === "ABD") {
+      this._money = this.exchangeToTurkish(excMoney);
+    } else {
+      this._money = this.exchangetoDolar(excMoney);
+    }
+  }
+
+  public get exchangeMoney() {
+    console.log("get fonksiyonu çalıştı");
+    if (this._country === "ABD") {
+      return this._money;
+    }
+    return this._money;
+  }
+}
+
+const abdDolars = new ExchangeMoney("ABD");
+// 20 dolar gönderiyoruz.
+abdDolars.exchangeMoney = 20;
+
+const turkishLiras = new ExchangeMoney("TUR");
+// 400 tl gönderiyoruz.
+turkishLiras.exchangeMoney = 400;
+
+console.table({ abdDolars, turkishLiras });
+console.table([abdDolars.exchangeMoney, turkishLiras.exchangeMoney]);

@@ -24,7 +24,7 @@ class CellularPhone_1 extends AntiquePhone_1 {
   public processor_name: string;
   public processor_speed: number;
 }
-
+const b = new CellularPhone_1();
 class SmartPhone_1 extends CellularPhone_1 {
   public screen_resolution: [number, number];
   public screen_color_type: "monochrome" | "color";
